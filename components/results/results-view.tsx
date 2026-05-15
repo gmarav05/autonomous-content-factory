@@ -384,6 +384,15 @@ function ContentTabsSection({
 }
 
 function BlogContent({ blog, onDownload }: { blog: CampaignResult["finalOutput"]["blog"]; onDownload: () => void }) {
+  const paragraphs = useMemo(
+    () =>
+      blog.body_markdown
+        .split(/\n{2,}/)
+        .map((segment) => segment.replace(/\n+/g, " ").trim())
+        .filter(Boolean),
+    [blog.body_markdown],
+  );
+
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -408,9 +417,13 @@ function BlogContent({ blog, onDownload }: { blog: CampaignResult["finalOutput"]
           </ul>
         </div>
       ) : null}
-      <article className="prose prose-sm prose-invert max-w-none">
-        <ReactMarkdown>{blog.body_markdown}</ReactMarkdown>
-      </article>
+      <div className="space-y-3 text-sm leading-7 text-foreground">
+        {paragraphs.map((paragraph, index) => (
+          <p key={index} className="text-pretty">
+            {paragraph}
+          </p>
+        ))}
+      </div>
     </div>
   );
 }
